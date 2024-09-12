@@ -16,21 +16,23 @@ export class AppComponent {
         this.init()
     }
 
-    public async init() {
-        const app = new Application()
+    app = new Application()
 
+    public async init() {
         // Wait for the Renderer to be available
-        await app.init({ resizeTo: document.body, background: '#ffffff' })
+        await this.app.init({ resizeTo: document.body, background: '#ffffff' })
 
         // The application will create a canvas element for you that you
         // can then insert into the DOM
-        document.body.appendChild(app.canvas)
+        document.body.appendChild(this.app.canvas)
 
         const texture = await Assets.load('assets/tile.png')
 
+        const tileSize = 100000000
         const tilingSprite = new TilingSprite({
             texture,
-            ...app.screen,
+            height: tileSize,
+            width: tileSize,
         })
 
         const container = new Container()
@@ -47,7 +49,42 @@ export class AppComponent {
 
         // Add it to the stage to render
         container.addChild(obj)
-        app.stage.addChild(container)
-        app.stage.addChild(tilingSprite)
+        this.app.stage.addChild(container)
+        this.app.stage.addChild(tilingSprite)
+
+        let lastPos: { x: number; y: number } | null = null
+        document.body.addEventListener('mousemove', (e) => {
+            if (!lastPos) {
+                return
+            }
+
+            const dx = e.clientX - lastPos.x
+            const dy = e.clientY - lastPos.y
+            this.app.stage.position.x += dx
+            this.app.stage.position.y += dy
+            lastPos = {
+                x: e.clientX,
+                y: e.clientY,
+            }
+        })
+
+        document.body.addEventListener('mousedown', (e) => {
+            lastPos = {
+                x: e.clientX,
+                y: e.clientY,
+            }
+        })
+
+        document.body.addEventListener('mouseup', () => {
+            lastPos = null
+        })
+
+        document.body.addEventListener('mouseenter', () => {
+            lastPos = null
+        })
+
+        document.body.addEventListener('mouseleave', () => {
+            lastPos = null
+        })
     }
 }
