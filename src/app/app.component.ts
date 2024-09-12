@@ -20,7 +20,7 @@ export class AppComponent {
 
     public async init() {
         // Wait for the Renderer to be available
-        await this.app.init({ resizeTo: document.body, background: '#ffffff' })
+        await this.app.init({ resizeTo: window, background: '#ffffff' })
 
         // The application will create a canvas element for you that you
         // can then insert into the DOM
@@ -28,11 +28,9 @@ export class AppComponent {
 
         const texture = await Assets.load('assets/tile.png')
 
-        const tileSize = 100000000
         const tilingSprite = new TilingSprite({
             texture,
-            height: tileSize,
-            width: tileSize,
+            ...this.app.screen,
         })
 
         const container = new Container()
@@ -46,11 +44,11 @@ export class AppComponent {
         })
 
         container.addChild(line)
+        container.addChild(obj)
 
         // Add it to the stage to render
-        container.addChild(obj)
-        this.app.stage.addChild(container)
         this.app.stage.addChild(tilingSprite)
+        this.app.stage.addChild(container)
 
         let lastPos: { x: number; y: number } | null = null
         document.body.addEventListener('mousemove', (e) => {
@@ -60,8 +58,11 @@ export class AppComponent {
 
             const dx = e.clientX - lastPos.x
             const dy = e.clientY - lastPos.y
-            this.app.stage.position.x += dx
-            this.app.stage.position.y += dy
+            tilingSprite.tilePosition.x += dx
+            tilingSprite.tilePosition.y += dy
+            container.position.x = tilingSprite.tilePosition.x
+            container.position.y = tilingSprite.tilePosition.y
+
             lastPos = {
                 x: e.clientX,
                 y: e.clientY,
