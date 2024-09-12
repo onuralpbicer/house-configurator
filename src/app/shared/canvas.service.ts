@@ -59,6 +59,15 @@ export class CanvasService {
             }
         })
 
+        document.body.addEventListener('wheel', (e) => {
+            this.app.stage.scale = {
+                x: this.app.stage.scale.x - e.deltaY * 0.001,
+                y: this.app.stage.scale.y - e.deltaY * 0.001,
+            }
+            console.log(this.app.stage.scale)
+            // this.app.stage.scale += 0.1
+        })
+
         document.body.addEventListener('mousedown', (e) => {
             if (e.button === 1)
                 lastPos = {
