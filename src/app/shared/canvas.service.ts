@@ -60,10 +60,11 @@ export class CanvasService {
         })
 
         document.body.addEventListener('mousedown', (e) => {
-            lastPos = {
-                x: e.clientX,
-                y: e.clientY,
-            }
+            if (e.button === 1)
+                lastPos = {
+                    x: e.clientX,
+                    y: e.clientY,
+                }
         })
 
         document.body.addEventListener('mouseup', () => {
